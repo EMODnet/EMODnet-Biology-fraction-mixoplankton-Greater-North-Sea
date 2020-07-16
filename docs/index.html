@@ -1726,7 +1726,7 @@ regions %&gt;% right_join(regionN, by = c(mrgid = &quot;mrgid&quot;)) %&gt;%
 ##   sourceType = col_character(),
 ##   contributor = col_character()
 ## )</code></pre>
-<pre class="r"><code>Sys.sleep(10)</code></pre>
+<pre class="r"><code># At the moment, this is a local file, and therefore, the method is not fully reproducible yet. However, these data have been submitted to WoRMS as traits, and they will come available as trait data during summer 2020. </code></pre>
 <pre class="r"><code>trophyData &lt;- all2Data %&gt;% 
   mutate(AphiaID = sub(&quot;http://marinespecies.org/aphia.php[?]p=taxdetails&amp;id=&quot;, &quot;&quot;, aphiaid, )) %&gt;% 
   full_join(trophy, by = c(AphiaID = &quot;AphiaID&quot;)) %&gt;% 
@@ -1799,6 +1799,10 @@ world &lt;- st_as_sf(countriesHigh) %&gt;%
 <div id="bias-in-species-per-dataset" class="section level3">
 <h3>Bias in species per dataset</h3>
 <p>Not all datasets address the same species. For example, the Plankton Recorder data contain species that are retained on a 60 µm filter, which excludes a number of small species. A possible way to get a better grip of the effect of this bias is to only regards species that occur in all (or most) datasets. This still needs to be done.</p>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<p>Schneider LK, Anestis K, Mansour J, Anschütz AA, Gypens N, Hansen PJ, John U, Klemm K, Martin JL, Nikola Medic, Fabrice Not, Willem Stolte (submitted). A dataset on trophic modes of aquatic protists. Submitted to Biodiversity Data Journal.</p>
 </div>
 </div>
 </div>
