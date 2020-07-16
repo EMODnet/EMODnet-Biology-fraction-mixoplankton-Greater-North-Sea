@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Mixoplankton is a newly introduced term indicating plankton that is capabable of both photosynthesis and phagotrophy. More details are found in Flynn et al., (2019). The potential trophic state can be seen as an inherent characteristic of plankton species. A literature and expert-knowledge study has provided the classification in either phototrophy or mixotrophy which is submitted as traits data to WoRMS. This analysis 
+Mixoplankton (sensu Flynn et al., 2019) is a newly introduced term indicating plankton that is capabable of both photosynthesis and phagotrophy. More details are found in Flynn et al., (2019). The potential trophic state can be seen as an inherent characteristic of plankton species. A literature and expert-knowledge study has provided the classification in either phototrophy or mixotrophy which is submitted as traits data to WoRMS. This analysis makes use of this classification to estimate the spatial and temporal distribution of the fraction of mixoplanktonic species in the Greater North Sea including the Celtic Seas.
 
 ## Directory structure
 
