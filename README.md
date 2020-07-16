@@ -26,17 +26,31 @@ Mixoplankton is a newly introduced term indicating plankton that is capabable of
 
 ## Data series
 
-{{data_series}}
+Data are extracted from EMODnet Biology. This is described in more detail in the product on phytoplankton abundance.
 
-```
-{{data_wfs_request}}
-```
+Data are requested per dataset and subregion. This is done in the script "scripts/requestData.R". 
+
+The general form is:downloadURL <- paste0("https://geo.vliz.be/geoserver/wfs/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=Dataportal%3Aeurobis-obisenv_full&resultType=results&viewParams=where%3A%28%28up.geoobjectsids+%26%26+ARRAY%5B", mrgid, "%5D%29%29+AND+datasetid+IN+(", datasetid, ");context%3A0100&propertyName=datasetid%2Cdatecollected%2Cdecimallatitude%2Cdecimallongitude%2Ccoordinateuncertaintyinmeters%2Cscientificname%2Caphiaid%2Cscientificnameaccepted%2Cinstitutioncode%2Ccollectioncode%2Coccurrenceid%2Cscientificnameauthorship%2Cscientificnameid%2Ckingdom%2Cphylum%2Cclass%2Corder%2Cfamily%2Cgenus%2Csubgenus%2Caphiaidaccepted%2Cbasisofrecord%2Ceventid&outputFormat=csv")
+
+where *datasetid* and *mrgid* are varied as described in the script. 
+
+The data were extracted from the Greater North Sea including the Celtic Seas.
 
 ## Data product
 
-{{data_product_description}}
+The data product is the spatial variation of the proportion of mixoplankton species *sensu* Flynn et al. (2019) as compared to the sum of mixoplankton and phytoplankton species in the different seasons, winter, spring, summer, and authumn.
+
+The data product is prepared by joining the requested data with a table describing the trophic mode of about 1500 planktonic species that are regualarly  monitored in the North Sea and the Baltic Sea. This list with traits has been submitted to the WoRMS traits database, but is not yet available via WoRMS. Therefore, the joined table of the occurences and these traits is available in this project in "data/derived_data" as "allDataTrait.csv". 
+Not all species could be matched. The product only represents the species that where present in the EMODnet plankton datasets, assuming that it still is representative for the overall signal. The species in the traits list include, but is not limited to, all species monitored by the Dutch Government in the North Sea, and that is available in the Helcom phytoplankton products for the Baltic Sea. It is likely that those species cover most of the biomass that is present. 
+
+The product is based on the occurence of species per grid cell. It therefore does not represent biomass ratio's, but only the ratio' of occurring species. 
+
+
+
 
 ## More information:
+
+
 
 ### References
 
@@ -44,13 +58,13 @@ Mixoplankton is a newly introduced term indicating plankton that is capabable of
 
 ### Code and methodology
 
-{{link_code}}
+https://github.com/wstolte/mixoplanktonFractions
 
 ### Citation and download link
 
 This product should be cited as:
 
-{{product_citation}}
+
 
 Available to download in:
 
