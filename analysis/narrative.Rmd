@@ -23,7 +23,7 @@ dataDir <- "../data/derived_data"
 ```
 
 ```{r styleDef, echo = T}
-EMODnetMapCleanStyle <- theme_minimal() +
+EMODnetMapCleanStyle <- theme_bw() +
   theme(axis.text = element_blank(),
         axis.title = element_blank())
 
@@ -170,8 +170,8 @@ world <- st_as_sf(countriesHigh) %>%
 
 ggplot() +
   stat_summary_2d(data = plottrophy, aes(x = decimallongitude, y = decimallatitude, z=fMix), fun=mean, binwidth = c(1,0.5)) +
-  geom_sf(data = world, fill = "transparent", color = "darkgrey", alpha = 0.5) +
-  scale_fill_viridis_c() +
+  geom_sf(data = world, fill = "transparent", color = "grey", alpha = 0) +
+  scale_fill_viridis_c(option = "viridis") +
   coord_sf(xlim = c(-15, 17), ylim = c(45, 65), expand = T, clip = "on") +
   facet_wrap(~ season) +
   EMODnetMapCleanStyle
