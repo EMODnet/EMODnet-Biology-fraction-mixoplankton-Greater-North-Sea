@@ -1,9 +1,16 @@
 ---
 title: "Greater North Sea mixoplankton"
-subtitle: "A first analysis"
+knit: (function(input_file, encoding) {
+  out_dir <- '../docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "Willem Stolte"
 date: "17/06/2020"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
+subtitle: A first analysis
 ---
 
 
@@ -35,12 +42,11 @@ EMODnetMapNormalStyle <-
 ```
 
 
-
 # Introduction
 
 ## Documentation
 
-Github project: https://github.com/wstolte/EMODnet-Biology-Phytoplankton-NorthSea
+Github project: https://github.com/wstolte/mixoplanktonFractions
 
 # Data extraction
 
@@ -99,19 +105,20 @@ regions %>% right_join(regionN, by = c(mrgid = "mrgid")) %>%
 
 ## Join with trophic mode table
 
-Schneider et al. (submitted) has defined trophic mode for about 1500 species of plankton. A first subdivision is in 
+Schneider et al. (submitted to Journal of Biological Data, data submitted to WoRMS) has defined trophic mode for about 1500 species of plankton. A first subdivision is in 
 
 * phytoplankton - phototrophic, no phagotrophy known
 * mixoplankton - capable of phototrophy and phagotrophy
 * zooplankton - phagotrophic, no phototrophy known.
 
-Mixoplankton is subdevided in different classes, but at this moment, we will not use this. 
-
+Mixoplankton is subdivided in different classes, but at this moment, we will not use this. 
 
 
 ```{r}
 trophy <- read_delim("p:/11200463-mixitin-mixotrophs/20.Data/project4_dataPaperTrophy/p7List_All.csv", delim = ";", guess_max = 10000)
-Sys.sleep(10)
+
+# At the moment, this is a local file, and therefore, the method is not fully reproducible yet. However, these data have been submitted to WoRMS as traits, and they will come available as trait data during summer 2020. 
+
 ```
 
 
@@ -156,14 +163,16 @@ require(rworldxtra)
 data(countriesHigh)
 world <- st_as_sf(countriesHigh) %>% 
   filter(REGION == "Europe") %>%
-  filter(ADMIN %in% c("Denmark", "Germany", "Netherlands", "Belgium", "United Kingdom", "France", "Norway", "Sweden")) %>%
-  select(ADMIN)
+  filter(ADMIN %in% c("Denmark", "Germany", "Netherlands", "Belgium", "United Kingdom", "France", "Norway", "Sweden", "Ireland")) %>%
+  select(ADMIN) %>%
+  st_crop(xmin = -15, xmax = 17, ymin = 45, ymax = 65)
+
 
 ggplot() +
-  stat_summary2d(data = plottrophy, aes(x = decimallongitude, y = decimallatitude, z=fMix), fun=mean, binwidth = c(0.5,0.5)) +
-  geom_sf(data = world, fill = "black", color = "transparent", alpha = 0.5) +
+  stat_summary_2d(data = plottrophy, aes(x = decimallongitude, y = decimallatitude, z=fMix), fun=mean, binwidth = c(1,0.5)) +
+  geom_sf(data = world, fill = "transparent", color = "darkgrey", alpha = 0.5) +
   scale_fill_viridis_c() +
-  coord_sf(xlim = c(-15, 15), ylim = c(45, 65)) +
+  coord_sf(xlim = c(-15, 17), ylim = c(45, 65), expand = T, clip = "on") +
   facet_wrap(~ season) +
   EMODnetMapCleanStyle
 ```
@@ -198,8 +207,9 @@ all2Data %>%
 Not all datasets address the same species. For example, the Plankton Recorder data contain species that are retained on a 60 µm filter, which excludes a number of small species. A possible way to get a better grip of the effect of this bias is to only regards species that occur in all (or most) datasets. This still needs to be done. 
 
 
- 
+### References 
 
+Schneider LK, Anestis K, Mansour J, Anschütz AA, Gypens N, Hansen PJ, John U, Klemm K, Martin JL, Nikola Medic, Fabrice Not, Willem Stolte (submitted). A dataset on trophic modes of aquatic protists. Submitted to Biodiversity Data Journal.
 
 
 
