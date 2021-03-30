@@ -40,21 +40,26 @@ The data were extracted from the Greater North Sea including the Celtic Seas.
 
 The data product is the spatial variation of the proportion of mixoplankton species *sensu* Flynn et al. (2019) as compared to the sum of mixoplankton and phytoplankton species in the different seasons, winter, spring, summer, and authumn.
 
-The data product is prepared by joining the requested data with a table describing the trophic mode of about 1500 planktonic species that are regualarly  monitored in the North Sea and the Baltic Sea. This list with traits has been submitted to the WoRMS traits database, but is not yet available via WoRMS. Therefore, the joined table of the occurences and these traits is available in this project in "data/derived_data" as "allDataTrait.csv". 
-Not all species could be matched. The product only represents the species that where present in the EMODnet plankton datasets, assuming that it still is representative for the overall signal. The species in the traits list include, but is not limited to, all species monitored by the Dutch Government in the North Sea, and that is available in the Helcom phytoplankton products for the Baltic Sea. It is likely that those species cover most of the biomass that is present. 
+The data product is prepared by joining the requested data with a table describing the trophic mode of about 1500 planktonic species that are regularly  monitored in the North Sea and the Baltic Sea. This list with traits has been submitted to the WoRMS traits database (Schneider et al., 2020a). Because it is not easy to extract all known traits of plankton in one table, a table with these traits is available in this project in "data/raw_data" as "traits.csv". 
+
+Not all species could be matched. The product only represents the species that where present in the EMODnet plankton datasets and that could be matched with the traits list, assuming that it still is representative for the overall signal. 
+
+The species in the traits list include, but is not limited to, all species monitored by the Dutch Government in the North Sea (e.g. Schneider et al., 2020b), and that are available in the Helcom phytoplankton products for the Baltic Sea. It is likely that those species cover most of the biomass that is present. 
 
 The product is based on the occurence of species per grid cell. It therefore does not represent biomass ratio's, but only the ratio' of occurring species. 
 
 
-
-
 ## More information:
 
+https://emodnet.github.io/EMODnet-Biology-fraction-mixoplankton-Greater-North-Sea/
 
 
 ### References
 
 * Flynn KJ, Mitra A, Anestis K, Anschütz AA, Calbet A, Ferreira GD, Gypens N, Hansen PJ, John U, Martin JL, Mansour JS, Maselli M, Medić N, Norlin A, Not F, Pitta P, Romano F, Saiz E, Schneider LK, Stolte W, Traboni C (2019) Mixotrophic protists and a new paradigm for marine ecology: where does plankton research go now? Journal of Plankton Research 41 (4): 375‑391. https://doi.org/10.1093/plankt/fbz026
+*   Schneider LK, Anestis K, Mansour J, Anschütz AA, Gypens N, Hansen PJ, John U, Klemm K, Lapeyra Martin J, Medic N, Not F, Stolte W. (2020a) A dataset on trophic modes of aquatic protists. Biodiversity Data Journal 8. https://doi.org/10.3897/BDJ.8.e56648.
+*   Schneider LK, Flynn KJ, Herman PMJ, Troost TA, Stolte W. (2020b) Exploring the trophic spectrum: placing mixoplankton into marine protist communities of the Southern North Sea. Frontiers in Marine Science 7: 997 -  https://doi.org/10.3389/fmars.2020.586915
+
 
 ### Code and methodology
 

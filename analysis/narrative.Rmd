@@ -16,7 +16,13 @@ subtitle: A first analysis
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+
+knitr::opts_chunk$set(
+  echo = TRUE, comment = F,
+  # comment = FALSE, 
+  warning = FALSE
+)
+
 require(sf)
 require(tidyverse)
 require(lubridate)
@@ -30,7 +36,7 @@ tiffDir <- file.path(productDir, "tiff")
 select <- dplyr::select
 ```
 
-```{r styleDef, echo = T}
+```{r styleDef}
 EMODnetMapCleanStyle <- theme_bw() +
   theme(axis.text = element_blank(),
         axis.title = element_blank())
@@ -45,8 +51,6 @@ EMODnetMapNormalStyle <-
         plot.background = element_rect(fill = "grey90", colour = "white", size = 0),
         panel.border = element_blank()
 )
-
-
 ```
 
 
@@ -123,19 +127,16 @@ Mixoplankton is subdivided in different classes, but at this moment, we will not
 
 
 ```{r}
-# from Deltares network disk:
-# trophy <- read_delim("p:/11200463-mixitin-mixotrophs/20.Data/project4_dataPaperTrophy/p7List_All.csv", delim = ";", guess_max = 10000)
+# read information available in WoRMS traits. 
+# This is a local copy
 
-# local copy
 trophy <- read_delim("../data/raw_data/traits.csv", delim = ";", guess_max = 10000)
-
-# At the moment, this is a local file, and therefore, the method is not fully reproducible yet. However, these data have been submitted to WoRMS as traits, and they will come available as trait data during summer 2020. 
 
 ```
 
 
 
-```{r, message=F, warning=F}
+```{r}
 trophyData <- all2Data %>% 
   mutate(AphiaID = sub("http://marinespecies.org/aphia.php[?]p=taxdetails&id=", "", aphiaid, )) %>% 
   full_join(trophy, by = c(AphiaID = "AphiaID")) %>% 
@@ -157,7 +158,7 @@ trophyData <- all2Data %>%
 
 ```
 
-## Fraction of mixoplankton (first results)
+# Fraction of mixoplankton (first results)
 
 As a first approach, the fraction of mixoplankton/(phytoplankto + mixoplankton) is plotted on a map:
 
@@ -196,7 +197,6 @@ This first analysis shows highest fraction of mixoplankton in summer. Even in su
 
 
 ```{r include=FALSE}
-
 
   proWG <- CRS("EPSG:4326")
   proUTM <- CRS("+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs")
@@ -250,9 +250,9 @@ This first analysis shows highest fraction of mixoplankton in summer. Even in su
 
 
 
-## Limitations of this analysis
+# Limitations of this analysis - discussion
 
-### Incomplete classification
+## Incomplete classification
 
 At the moment, only 1500 species could be automatically classified as either phytoplankton or mixoplankton. This means that we are missing a number of species in this analysis, because the data contain more than 5000 species names. Part of those may be heterotrophic, which does not influence the maps above. If we assume that the fraction of mixoplankton is not very different in these unknown species as compared to the known species, the bias is not very strong. In the current analysis, the number of observations where species could not be classified was lower than the number of phytoplankton observations (figure ]\@ref(fig:. 
 
@@ -271,12 +271,12 @@ all2Data %>%
 
 
 
-### Bias in species per dataset
+## Bias in species per dataset
 
 Not all datasets address the same species. For example, the Plankton Recorder data contain species that are retained on a 60 µm filter, which excludes a number of small species. A possible way to get a better grip of the effect of this bias is to only regards species that occur in all (or most) datasets. This has not been undertaken yet.  
 
 
-### References 
+# References 
 
 *   Schneider LK, Flynn KJ, Herman PMJ, Troost TA, Stolte W. (2020a) Exploring the trophic spectrum: placing mixoplankton into marine protist communities of the Southern North Sea. Frontiers in Marine Science 7: 997 -  https://doi.org/10.3389/fmars.2020.586915
 *   Schneider LK, Anestis K, Mansour J, Anschütz AA, Gypens N, Hansen PJ, John U, Klemm K, Lapeyra Martin J, Medic N, Not F, Stolte W. (2020b) A dataset on trophic modes of aquatic protists. Biodiversity Data Journal 8. https://doi.org/10.3897/BDJ.8.e56648.
