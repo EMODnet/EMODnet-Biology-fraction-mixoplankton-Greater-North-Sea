@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 require(sf)
 require(tidyverse)
 require(lubridate)
+select <- dplyr::select
 dataDir <- "../data/derived_data"
 ```
 
@@ -115,7 +116,11 @@ Mixoplankton is subdivided in different classes, but at this moment, we will not
 
 
 ```{r}
-trophy <- read_delim("p:/11200463-mixitin-mixotrophs/20.Data/project4_dataPaperTrophy/p7List_All.csv", delim = ";", guess_max = 10000)
+# from Deltares network disk:
+# trophy <- read_delim("p:/11200463-mixitin-mixotrophs/20.Data/project4_dataPaperTrophy/p7List_All.csv", delim = ";", guess_max = 10000)
+
+# local copy
+trophy <- read_delim("../data/raw_data/traits.csv", delim = ";", guess_max = 10000)
 
 # At the moment, this is a local file, and therefore, the method is not fully reproducible yet. However, these data have been submitted to WoRMS as traits, and they will come available as trait data during summer 2020. 
 
@@ -159,6 +164,8 @@ plottrophy <- trophyData %>%
   mutate(fMix = mixotroph/(mixotroph + phototroph)) %>%
   drop_na(fMix)
 
+write_delim(plottrophy, file.path(csvDir, "trophydata.csv"), delim = ";")
+
 require(rworldxtra)
 data(countriesHigh)
 world <- st_as_sf(countriesHigh) %>% 
@@ -178,16 +185,79 @@ ggplot() +
 ```
 
 
-This first analysis shows highest fraction of mixoplankton in summer. Even in summer, the fraction of mixoplankton is still low along the Dutch and Belgian coast. This is in line with Schneider et al. (submitted_1). It is also in line with a general idea that mixoplankton, at least the constitutive mixoplankton, appear in post-bloom clear water conditions, which in the North Sea are associated with offshore, possibly stratified waters. 
+This first analysis shows highest fraction of mixoplankton in summer. Even in summer, the fraction of mixoplankton is still low along the Dutch, Belgian and French coast. This is in line with Schneider et al. (2020a). It is also in line with a general idea that mixoplankton, at least the constitutive mixoplankton, appear in post-bloom clear water conditions, which in the North Sea are associated with offshore, possibly stratified waters. 
+
+
+```{r include=FALSE}
+require(raster)
+require(EMODnetBiologyMaps)
+
+remoteCSV = FALSE
+productDir <- "../product"
+csvDir <- file.path(productDir, "csv_files")
+if(remoteCSV) csvDir <- file.path("p:/emodnet_biology/dataproducts/phytoplankton/GreaterNorthSea/product", "csv_files")
+pngDir <- file.path(productDir, "grid_plots")
+tiffDir <- file.path(productDir, "tiff")
+
+  proWG <- CRS("EPSG:4326")
+  proUTM <- CRS("+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs")
+  r1<-raster(ext=extent(-16,9,46,66),ncol=100,nrow=160,crs=proWG,vals=0)
+  r2<-raster(ext=extent(-16,9,46,66),ncol=25,nrow=40,crs=proWG,vals=0)
+  
+  seasons <- c('winter', 'spring', 'summer', 'autumn')
+  
+  for(jj in c(1:length(seasons))){
+    
+    seasonalData <- plottrophy %>% dplyr::filter(season == seasons[jj])
+    
+    coordinates(seasonalData)<- ~decimallongitude+decimallatitude
+    projection(seasonalData)<-proWG # because data were saved in UTM. Could be changed
+    # seasonalData <- sp::spTransform(seasonalData, proWG)
+    sp_r_highres<-rasterize(seasonalData,r1,field="fMix",fun=mean)
+    sp_r_lowres<-rasterize(seasonalData,r2,field="fMix",fun=mean)
+    
+    #save tiffs
+    
+    ec<-emodnet_colors()
+    spAphId <- "fMix"
+    
+    tifnam <- file.path(productDir, "tiff", paste(today(), gsub(" ", "-", spAphId), seasons[jj], ".tif", sep = "_"))
+    tifnam_lowres <- file.path(productDir, "tiff", paste(today(), gsub(" ", "-", spAphId), seasons[jj], "_lowres.tif", sep = "_"))
+    
+    writeRaster(sp_r_highres, tifnam, options=c('TFW=YES'), overwrite = T)
+    writeRaster(sp_r_lowres, tifnam_lowres, options=c('TFW=YES'), overwrite = T)
+    
+    plot_grid_highres <- emodnet_map_plot(data=sp_r_highres,title=paste0(spAphId),subtitle=paste("probability of occurrence in", seasons[jj]),
+                                  zoom=FALSE,seaColor=ec$darkgrey,landColor=ec$lightgrey,legend="",
+                                  xlim = c(2351321, 4275244), ylim = c(2543530,4985495)) +
+      scale_fill_viridis_c(limits = c(0,0.6))
+    
+    filnam <- file.path(productDir, "grid_plots", paste(today(), gsub(" ", "-", spAphId), seasons[jj], "highres.png", sep = "_"))
+    
+    emodnet_map_logo(plot_grid_highres,path=filnam,width=120,height=160,dpi=300,units="mm",offset="+0+0")
+    
+    
+    plot_grid_lowres <- emodnet_map_plot(data=sp_r_lowres,title=paste0(spAphId),subtitle=paste("probability of occurrence in", seasons[jj]),
+                                         zoom=FALSE,seaColor=ec$darkgrey,landColor=ec$lightgrey,legend="",
+                                         xlim = c(2351321, 4275244), ylim = c(2543530,4985495)) +
+      scale_fill_viridis_c(limits = c(0,0.6))
+    
+    filnam_lowres <- file.path(productDir, "grid_plots", paste(today(), gsub(" ", "-", spAphId), seasons[jj], "_lowres.png", sep = "_"))
+    
+    emodnet_map_logo(plot_grid_lowres,path=filnam_lowres,width=120,height=160,dpi=300,units="mm",offset="+0+0")
+    
+  }
+```
+
 
 
 ## Limitations of this analysis
 
 ### Incomplete classification
 
-At the moment, only 1500 species could be automatically classified as either phytoplankton or mixoplankton. This means that we are missing a number of species in this analysis, because the data contain more than 5000 species names. Part of those may be heterotrophic, which does not influence the maps above. If we assume that the fractioin of mixoplankton is not very different in these unknown species as compared to the known species, the bias is not very strong. 
+At the moment, only 1500 species could be automatically classified as either phytoplankton or mixoplankton. This means that we are missing a number of species in this analysis, because the data contain more than 5000 species names. Part of those may be heterotrophic, which does not influence the maps above. If we assume that the fraction of mixoplankton is not very different in these unknown species as compared to the known species, the bias is not very strong. In the current analysis, the number of observations where species could not be classified was lower than the number of phytoplankton observations (figure ]\@ref(fig:. 
 
-```{r}
+```{r classifications, fig.cap="Distribution of observations over known mixotrophs, phagotrophs, phototrophs and unknown trophy according to Schneider et al., (2020b). "}
 all2Data %>% 
   mutate(AphiaID = sub("http://marinespecies.org/aphia.php[?]p=taxdetails&id=", "", aphiaid, )) %>% 
   full_join(trophy, by = c(AphiaID = "AphiaID")) %>% 
@@ -204,14 +274,13 @@ all2Data %>%
 
 ### Bias in species per dataset
 
-Not all datasets address the same species. For example, the Plankton Recorder data contain species that are retained on a 60 µm filter, which excludes a number of small species. A possible way to get a better grip of the effect of this bias is to only regards species that occur in all (or most) datasets. This still needs to be done. 
+Not all datasets address the same species. For example, the Plankton Recorder data contain species that are retained on a 60 µm filter, which excludes a number of small species. A possible way to get a better grip of the effect of this bias is to only regards species that occur in all (or most) datasets. This has not been undertaken yet.  
 
 
 ### References 
 
-Schneider LK, Anestis K, Mansour J, Anschütz AA, Gypens N, Hansen PJ, John U, Klemm K, Martin JL, Nikola Medic, Fabrice Not, Willem Stolte (submitted). A dataset on trophic modes of aquatic protists. Submitted to Biodiversity Data Journal.
-
-
+*   Schneider LK, Flynn KJ, Herman PMJ, Troost TA, Stolte W. (2020a) Exploring the trophic spectrum: placing mixoplankton into marine protist communities of the Southern North Sea. Frontiers in Marine Science 7: 997 -  https://doi.org/10.3389/fmars.2020.586915
+*   Schneider LK, Anestis K, Mansour J, Anschütz AA, Gypens N, Hansen PJ, John U, Klemm K, Lapeyra Martin J, Medic N, Not F, Stolte W. (2020b) A dataset on trophic modes of aquatic protists. Biodiversity Data Journal 8. https://doi.org/10.3897/BDJ.8.e56648.
 
 
 
