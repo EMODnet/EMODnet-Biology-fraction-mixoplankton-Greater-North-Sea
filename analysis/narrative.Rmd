@@ -9,6 +9,7 @@ author: "Willem Stolte"
 date: "17/06/2020"
 output:
   html_document:
+    code_folding: hide
     df_print: paged
 subtitle: A first analysis
 ---
@@ -19,8 +20,14 @@ knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 require(sf)
 require(tidyverse)
 require(lubridate)
-select <- dplyr::select
+require(raster)
+require(EMODnetBiologyMaps)
 dataDir <- "../data/derived_data"
+productDir <- "../product"
+csvDir <- file.path(productDir, "csv")
+pngDir <- file.path(productDir, "grid_plots")
+tiffDir <- file.path(productDir, "tiff")
+select <- dplyr::select
 ```
 
 ```{r styleDef, echo = T}
@@ -189,15 +196,7 @@ This first analysis shows highest fraction of mixoplankton in summer. Even in su
 
 
 ```{r include=FALSE}
-require(raster)
-require(EMODnetBiologyMaps)
 
-remoteCSV = FALSE
-productDir <- "../product"
-csvDir <- file.path(productDir, "csv_files")
-if(remoteCSV) csvDir <- file.path("p:/emodnet_biology/dataproducts/phytoplankton/GreaterNorthSea/product", "csv_files")
-pngDir <- file.path(productDir, "grid_plots")
-tiffDir <- file.path(productDir, "tiff")
 
   proWG <- CRS("EPSG:4326")
   proUTM <- CRS("+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs")
