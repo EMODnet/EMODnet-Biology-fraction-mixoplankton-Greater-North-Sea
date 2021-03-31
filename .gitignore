@@ -29,3 +29,10 @@ output/
 
 # RStudio
 .Rproj.user
+
+# products
+product/*/*.csv
+product/*/*.tif
+product/*/*.tfw
+product/*/*.png
+
