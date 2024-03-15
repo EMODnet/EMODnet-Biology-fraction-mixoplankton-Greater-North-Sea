@@ -78,8 +78,11 @@ Willem Stolte & Lisa Schneider (2020) ‘Proof of concept’ product: Fraction o
 
 Available to download in: 
 
-https://www.emodnet-biology.eu/data-catalog?module=dataset&dasid=6621
+[EMODnet catalogue](https://emodnet.ec.europa.eu/geonetwork/srv/eng/catalog.search#/metadata/73b3d714b002723f351fd12e443067363c44c834)
 
+[VLIZ catalogue](https://www.emodnet-biology.eu/data-catalog?module=dataset&dasid=6621)
+
+[EMODnet viewer](https://emodnet.ec.europa.eu/geoviewer/?layers=12667:1:1&basemap=ebwbl&active=12667&bounds=-8248235.308352802,3721498.0026042913,10922700.319775924,12098797.477604292&filters=&projection=EPSG:3857)
 
 ### Authors
 
